@@ -1,0 +1,65 @@
+[tool.black]
+max-line-length = 120
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
+omit = [
+    "**/fixtures.py",
+    "manage.py",
+    "**/wsgi.py",
+    "**/settings/*.py",
+    "**/migrations/*.py",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_app.settings.tests"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+norecursedirs = ["deployment*",
+                 ".git/*",
+                 ".mypy_cache/*",
+                 ".pytest_cache/*",
+                 "migrations/*",
+                 "settings/*",
+]
+addopts = "--nomigrations"
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py310, flake8, black, isort, mypy
+skipsdist = True
+
+[gh-actions]
+python =
+    3.10: py310
+
+[testenv:flake8]
+basepython = python
+deps = flake8
+commands = flake8 django_app
+
+[testenv:black]
+deps = black
+commands = black --check django_app
+
+[testenv:isort]
+deps = isort
+commands = isort --check django_app
+
+[testenv:mypy]
+deps = -r requirements/dev.txt
+commands = mypy django_app
+
+[testenv]
+setenv = PYTHONPATH = {toxinidir}
+deps = -r requirements/dev.txt
+commands = pytest django_app
+"""

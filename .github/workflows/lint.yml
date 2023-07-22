@@ -1,0 +1,22 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-md:
+    runs-on: ubuntu-latest
+    name: Lint Markdown files
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Lint Markdown files
+        uses: docker://avtodev/markdown-lint:v1
+        with:
+          args: "**/*.md"
+          config: ./.markdownlint.json
